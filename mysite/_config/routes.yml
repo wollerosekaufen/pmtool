@@ -1,0 +1,11 @@
+---
+Name: pmtoolroutes
+After: framework/routes#coreroutes
+---
+Director:
+  rules:
+    'start': StartController
+    'administrator': AdminController
+    'developer': DeveloperController
+    'projectmanager': ProjectmanagerController
+    'home': Page_Controller

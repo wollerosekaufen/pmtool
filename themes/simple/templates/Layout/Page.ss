@@ -12,9 +12,7 @@
  
 
 		<div class="content">$Content</div>
-		$MyForm
-		$NewProject
-		$Login
+
 	</article>
 	$Form
 	$CommentForm

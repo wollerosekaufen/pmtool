@@ -26,6 +26,7 @@ Change it, enhance it and most importantly enjoy it!
 	<% require themedCSS('typography') %>
 	<% require themedCSS('form') %>
 	<% require themedCSS('layout') %>
+    <% require css('mysite/css/pure-min.css') %>
 	<link rel="shortcut icon" href="$ThemeDir/images/favicon.ico" />
 </head>
 <body class="$ClassName<% if not $Menu(2) %> no-sidebar<% end_if %>" <% if $i18nScriptDirection %>dir="$i18nScriptDirection"<% end_if %>>
@@ -37,16 +38,42 @@ Change it, enhance it and most importantly enjoy it!
 <div class="content-container unit size3of4 lastUnit">
 	<article>
 		<% if $CurrentMember %>
-		<p style="float:right">Eingeloggt als <strong>$CurrentMember.Username</strong> (<a href="{$BaseHref}Security/logout">Logout</a>)</p>
-		<h1>Rollen-/Rechteverteilung</h1>
-		<a href="{$BaseHref}admin"><strong>CMS</strong></a>
+		<p style="float:right">Eingeloggt als $myGroup <strong>$CurrentMember.Username</strong> (<a href="{$BaseHref}Security/logout">Logout</a>)</p>
+		<h1>Mitarbeiterliste</h1>
+		<a style="float:right" href="{$BaseHref}admin"><strong>CMS</strong></a>
+
+
+            <table class="pure-table pure-table-horizontal">
+                <thead>
+                <tr>
+                    <th>Vorname</th>
+                    <th>Nachname</th>
+                    <th>Username</th>
+                    <th>E-Mail</th>
+                    <th>Rolle</th>
+                </tr>
+                </thead>
+                <tbody>
+					<% loop $Members %>
+                    <tr>
+                        <td>$FirstName</td>
+                        <td>$Surname</td>
+                        <td>$Username</td>
+                        <td>$Email</td>
+						<% if $ClassName == "Member" %>
+                            <td>Administrator</td>
+						<% else %>
+                            <td>$ClassName</td>
+						<% end_if %>
+                    </tr>
+					<% end_loop %>
+                </tbody>
+            </table>
 
 		<% end_if %>
 
 		<div class="content">$Content</div>
-		$MyForm
-		$NewProject
-		$Login
+
 	</article>
 	$Form
 	$CommentForm

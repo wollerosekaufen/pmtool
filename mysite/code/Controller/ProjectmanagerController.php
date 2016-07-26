@@ -2,14 +2,15 @@
 
 class ProjectmanagerController extends ContentController {
 
-    private static $allowed_actions = array('getTasks','rtNewProjectForm','renderNewProjectForm');
+    private static $allowed_actions = array('getTasks','NewProjectMask','renderNewProjectForm','noRights');
 
     private static $url_handlers = array(
 		'$ID!/tasks/$tID!' => 'getTasks',
 		'newproject' => 'renderNewProjectForm',
-        '$ID' => 'index'
+		'keinZugriff' => 'noRights'//,
+        //'$ID' => 'index'
     );
-	
+
 	/**
      * Handles following scenarios:
      *  - Show one task with all details
@@ -28,12 +29,13 @@ class ProjectmanagerController extends ContentController {
 
             // Fetch task by ID from URL/request
             $task = $project->Tasks()->byID($request->param('tID'));
-			
+
 			if(!Member::currentUser())
 				return $this->redirect('Security/login');
-			
-            // Render task with template "DetailedTaskInfo.ss"
-            return $this->customise(array('Task' => $task))->renderWith('DetailedTaskInfo');
+			else if(Member::currentUser()->inGroups(array('administrators','projectmanager'), true))
+				return $this->customise(array('Task' => $task))->renderWith('projDetailedTaskInfo');   // Render task with template "projDetailedTaskInfo.ss"
+			else if(Member::currentUser()->inGroup('developer', true))
+				return $this->redirect('projectmanager/keinZugriff');
         } 
     }
 	
@@ -42,14 +44,20 @@ class ProjectmanagerController extends ContentController {
     public function index(SS_HTTPRequest $request) {
 		if(!Member::currentUser())
 			return $this->redirect('Security/login');
-        return $this->renderWith('Projectmanager');
+		else if(Member::currentUser()->inGroups(array('administrators','projectmanager'), true))
+			return $this->renderWith('Projectmanager');
+		else if(Member::currentUser()->inGroup('developer', true))
+			return $this->redirect('projectmanager/keinZugriff');
     }
 	
 
 	public function renderNewProjectForm(SS_HTTPRequest $request) {
 		if(!Member::currentUser())
 			return $this->redirect('Security/login');
-        return $this->renderWith('NewProjectForm');
+		else if(Member::currentUser()->inGroups(array('administrators','projectmanager'), true))
+			return $this->renderWith('NewProjectForm');
+		else if(Member::currentUser()->inGroup('developer', true))
+			return $this->redirect('projectmanager/keinZugriff');
     }
 	
 	/**
@@ -92,9 +100,9 @@ class ProjectmanagerController extends ContentController {
 	public function getArchivedProjects(){
 		return Project::get()->filter('End:LessThan',date('Y-m-d'));
 	}
-	
-	public function rtNewProjectForm() {
-        $fields = new FieldList(array(
+
+	public function NewProjectMask() {
+        $fields = new FieldList(
                 TextField::create('Title','Title')
 					->setAttribute('autocomplete', 'off')
 					->setAttribute('placeholder', 'Enter a project title ...'), // (key,name)
@@ -102,55 +110,71 @@ class ProjectmanagerController extends ContentController {
 					->setAttribute('autocomplete', 'off'),
                 DateField::create('Start','Start')
 					->setAttribute('autocomplete', 'off')		// in Doku aufnehmen: field history löschen zwecks überlappung
-					->setConfig('showcalendar', true),			// in Doku aufnehmen: kalender zwecks usability
+					->setConfig('showcalendar', true)			// in Doku aufnehmen: kalender zwecks usability
+					->setAttribute('placeholder', 'Click me ...'),
 				DateField::create('End','End')
 					->setAttribute('autocomplete', 'off')		// in Doku aufnehmen: field history löschen zwecks überlappung
-					->setConfig('showcalendar', true),			// in Doku aufnehmen: kalender zwecks usability
+					->setConfig('showcalendar', true)			// in Doku aufnehmen: kalender zwecks usability
+					->setAttribute('placeholder', 'Click me ...'),
 				DropdownField::create('Projectmanager','Projectmanager', Projectmanager::get()->map('ID','Title'))
-		));
+					->setEmptyString('Select a Projectmanager ...')
+
+		);
 
         $actions = new FieldList(FormAction::create('doCreateP','Projekt anlegen'));
 
-        $requiredFields = new RequiredFields(array('Title'));
+        $requiredFields = new RequiredFields(array('Title','Start','End','Projectmanager'));
 
-        return new Form($this, 'rtNewProjectForm', $fields, $actions, $requiredFields);
+        return new Form($this, 'NewProjectMask', $fields, $actions, $requiredFields);
     }
-	
-	// public function doSubmit($data, $form) {
-        // // New empty instance of model "Project"
-        // $project = new Project();
 
-        // // Save values from form fields to Project instance
-        // $form->saveInto($project);
-
-        // // Save Project instance to database
-        // $project->write();
-
-        // // Redirect back to list
-        // $this->redirect(projectmanager);
-    // }
-	
 	public function doCreateP($data, $form) {
-		
+
 		// Creating a new project record
 		$nP = new Project();
-		
+
 		// Check if a description was submitted
 		if(isset($data['Description'])){
 			$nP->Description = $data['Description'];
 		}
-		
+
 		$nP->Title = $data['Title'];
 		$nP->Start = $data['Start'];
 		$nP->End = $data['End'];
+		$nP->ProjectmanagerID = $data['Projectmanager'];
 		$nP->write();
-		
+
 		// Create a nice msg for our users
 		$form->sessionMessage('Projekt angelegt!','good');
-		
-		// Redirect back to the form page
-		return $this->redirect('admin');
 
+		// Redirect back to the form page
+		return $this->redirectBack();
 	}
-	
+
+	public function noRights(){
+		if(!Member::currentUser())
+			return $this->redirect('Security/login');
+		return $this->renderWith('keinZugriff');
+	}
+
+	public function myUrl() {
+		$segments = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
+		$numSegments = count($segments);
+		$currentSegment = $segments[$numSegments - 2];
+
+		if($currentSegment == 'developer')
+			return 'Developer-Seiten';
+		else if($currentSegment == 'projectmanager')
+			return 'Projektmanager-Seiten';
+		else
+			return 'Administrator-Seiten';
+	}
+
+	public function myGroup(){
+		if(Member::currentUser()->inGroup('projectmanager', true))
+			return 'Projektmanager';
+		else if(Member::currentUser()->inGroup('developer', true))
+			return 'Developer';
+	}
+
 }

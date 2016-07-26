@@ -39,7 +39,7 @@ Change it, enhance it and most importantly enjoy it!
 <div class="content-container unit size3of4 lastUnit">
 	<article>
 		<% if $CurrentMember %>
-		<p style="float:right">Eingeloggt als <strong>$CurrentMember.Username</strong> (<a href="{$BaseHref}Security/logout">Logout</a>)</p>
+		<p style="float:right">Eingeloggt als $myGroup <strong>$CurrentMember.Username</strong> (<a href="{$BaseHref}Security/logout">Logout</a>)</p><br>
 		<h1>Projekt&uuml;bersicht</h1>
 
 	<div class="pure-u-1-4">
@@ -77,17 +77,16 @@ Change it, enhance it and most importantly enjoy it!
             <% with $ActiveProject %>
                 <div class="project-content">
                     <div class="project-content-header pure-g">
-                        <div class="pure-u-1-2">
+                        <div class="pure-u-5-8">
                             <h1 class="project-content-title">$Title</h1>
                             <p class="project-content-subtitle">
                                 Projektlaufzeit <span>$Start.Format('d.m.Y')<% if $End %> - $End.Format('d.m.Y')<% end_if %></span>
                             </p>
                         </div>
 						
-						<div style="float:right" class="project-content-controls pure-u-10-24">
+						<div style="float:right" class="project-content-controls pure-u-8-24">
 							<a href="{$BaseHref}projectmanager/newproject" class="secondary-button pure-button">New Project</a>
 							<a  class="secondary-button pure-button">New Task</a>
-							<a  class="secondary-button pure-button">Edit</a>
 							<a  class="secondary-button pure-button">Delete</a>
                         </div>
                     </div>
@@ -102,7 +101,6 @@ Change it, enhance it and most importantly enjoy it!
                                 <thead>
                                 <tr>
                                     <th>Title</th>
-                                    <th>Estimated time</th>
                                 </tr>
                                 </thead>
 
@@ -110,7 +108,6 @@ Change it, enhance it and most importantly enjoy it!
                                     <% loop $Tasks %>
                                     <tr>
                                         <td><a href="{$BaseHref}projectmanager/$Project.ID/tasks/$ID">$Title</a></td>
-                                        <td style="text-align:center">{$EstimatedTime}h</td>
                                     </tr>
                                     <% end_loop %>
                                 </tbody>
@@ -124,10 +121,9 @@ Change it, enhance it and most importantly enjoy it!
 		<div class="project-content">
 			<div class="project-content-header pure-g">
 				<div class="pure-u-1-3"><p style="margin: 6px 20px;"><b>Kein Projekt ausgew&auml;hlt.</b></p></div>
-					<div style="float:right" class="project-content-controls pure-u-10-24">
+					<div style="float:right" class="project-content-controls pure-u-8-24">
 						<a href="{$BaseHref}projectmanager/newproject" class="secondary-button pure-button">New Project</a>
 						<a  class="secondary-button pure-button">New Task</a>
-						<a  class="secondary-button pure-button">Edit</a>
 						<a  class="secondary-button pure-button">Delete</a>
                    </div>
 			</div>
@@ -138,7 +134,7 @@ Change it, enhance it and most importantly enjoy it!
 		<% end_if %>
 
 		<div class="content">$Content</div>
-		$Login
+
 	</article>
 	$Form
 	$CommentForm

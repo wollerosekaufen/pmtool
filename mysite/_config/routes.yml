@@ -6,6 +6,7 @@ Director:
   rules:
     'start': StartController
     'administrator': AdminController
+    'developer//$ID': 'DeveloperController'
     'developer//$Action/$ID/$Name': 'DeveloperController'
     'DeveloperController//$Action/$ID/$Name': 'DeveloperController'
     'projectmanager//$Action/$ID/$Name': 'ProjectmanagerController'

@@ -57,6 +57,6 @@ class AdminController extends ContentController {
     }
 
     public function getMembers(){
-        return Member::get();
+        return Member::get()->sort('ClassName');
     }
 }

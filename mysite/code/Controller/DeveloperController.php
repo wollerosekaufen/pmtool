@@ -7,8 +7,8 @@ class DeveloperController extends ContentController {
     private static $url_handlers = array(
         'newtask' => 'renderNewTaskForm',
         'keinZugriff' => 'noRights',
-        '$ID!/tasks/$tID!' => 'getTasks'//,
-        //'$ID!' => 'index'
+        '$ID!/tasks/$tID!' => 'getTasks',
+        '$ID' => 'index'
     );
 
     public function getTasks(SS_HTTPRequest $request) {

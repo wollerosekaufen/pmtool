@@ -42,15 +42,15 @@ Change it, enhance it and most importantly enjoy it!
 			<h1>Mitarbeiterliste</h1>
 
 			<dev class="pure-u-4-5">
-				<table class="pure-table pure-table-horizontal">
+				<table style="width:100%;" class="pure-table pure-table-horizontal">
 					<thead>
-					<tr>
-						<th>Vorname</th>
-						<th>Nachname</th>
-						<th>Username</th>
-						<th>E-Mail</th>
-						<th>Rolle</th>
-					</tr>
+						<tr>
+							<th>Vorname</th>
+							<th>Nachname</th>
+							<th>Username</th>
+							<th>E-Mail</th>
+							<th>Rolle</th>
+						</tr>
 					</thead>
 					<tbody>
 						<% loop $Members %>

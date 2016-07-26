@@ -37,6 +37,18 @@ class AdminController extends ContentController {
             return 'Administrator-Seiten';
     }
 
+    public function myUrl2() {
+        $segments = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
+        $numSegments = count($segments);
+        $currentSegment = $segments[$numSegments - 2];
+
+        if($currentSegment == 'developer')
+            return 'developer';
+        else
+            return 'projectmanager';
+
+    }
+
     public function myGroup(){
         if(Member::currentUser()->inGroup('projectmanager', true))
             return 'Projektmanager';

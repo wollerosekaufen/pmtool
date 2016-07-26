@@ -12,4 +12,3 @@ SSViewer:
 Member:
   extensions: 
     - UsernameExtension
-    - LoginCounterExtension

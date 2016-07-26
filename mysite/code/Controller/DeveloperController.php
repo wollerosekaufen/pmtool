@@ -70,11 +70,15 @@ class DeveloperController extends ContentController {
     }
 
     public function getActiveProjects(){
-        return Project::get()->filter('End:GreaterThan',date('Y-m-d'));//->filter('ID',Member::currentUserID());
+        $developer = Developer::get()->byID(Member::currentUserID());
+        $MyOwnProjects = $developer->Projects()->filter('End:GreaterThan',date('Y-m-d'));
+        return $MyOwnProjects;
     }
 
     public function getArchivedProjects(){
-        //return Project::get()->filter('End:LessThan',date('Y-m-d'))->filter('Project.DeveloperID:partialmatch',Member::currentUserID());
+        $developer = Developer::get()->byID(Member::currentUserID());
+        $MyOwnProjects = $developer->Projects()->filter('End:LessThan',date('Y-m-d'));
+        return $MyOwnProjects;
     }
 
 
@@ -133,6 +137,18 @@ class DeveloperController extends ContentController {
             return 'Projektmanager-Seiten';
         else
             return 'Administrator-Seiten';
+    }
+
+    public function myUrl2() {
+        $segments = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
+        $numSegments = count($segments);
+        $currentSegment = $segments[$numSegments - 2];
+
+        if($currentSegment == 'developer')
+            return 'developer';
+        else
+            return 'projectmanager';
+
     }
 
     public function myGroup(){

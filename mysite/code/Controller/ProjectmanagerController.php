@@ -2,9 +2,10 @@
 
 class ProjectmanagerController extends ContentController {
 
-    private static $allowed_actions = array('getTasks','NewProjectMask','renderNewProjectForm','noRights');
+    private static $allowed_actions = array('getTasks','NewProjectMask','renderNewProjectForm','NewTaskMask','renderNewTaskForm','noRights');
 
     private static $url_handlers = array(
+		'newtask' => 'renderNewTaskForm',
 		'$ID!/tasks/$tID!' => 'getTasks',
 		'newproject' => 'renderNewProjectForm',
 		'keinZugriff' => 'noRights'//,
@@ -59,7 +60,16 @@ class ProjectmanagerController extends ContentController {
 		else if(Member::currentUser()->inGroup('developer', true))
 			return $this->redirect('projectmanager/keinZugriff');
     }
-	
+
+	public function renderNewTaskForm(SS_HTTPRequest $request) {
+		if(!Member::currentUser())
+			return $this->redirect('Security/login');
+		else if(Member::currentUser()->inGroups(array('administrators','projectmanager'), true))
+			return $this->renderWith('NewTaskForm');
+		else if(Member::currentUser()->inGroup('developer', true))
+			return $this->redirect('projectmanager/keinZugriff');
+	}
+
 	/**
      * Returns a list (DataList) of all stored projects.
      *
@@ -151,6 +161,44 @@ class ProjectmanagerController extends ContentController {
 		return $this->redirectBack();
 	}
 
+	public function NewTaskMask() {
+		$fields = new FieldList(
+			TextField::create('Title','Title')
+				->setAttribute('autocomplete', 'off')
+				->setAttribute('placeholder', 'Enter a task title ...'), // (key,name)
+			TextareaField::create('Description','Description')
+				->setAttribute('autocomplete', 'off'),
+			DropdownField::create('Project','Project', Project::get()->map('ID','Title'))
+				->setEmptyString('Select a Project ...'),
+			DropdownField::create('Developer','Developer', Developer::get()->map('ID','Title'))
+				->setEmptyString('Select a Developer ...')
+		);
+
+		$actions = new FieldList(FormAction::create('doCreateT','Task anlegen'));
+
+		$requiredFields = new RequiredFields(array('Title','Project'));
+
+		return new Form($this, 'NewTaskMask', $fields, $actions, $requiredFields);
+	}
+
+	public function doCreateT($data, $form) {
+
+		// Creating a new task record
+		$nT = new Task();
+
+		$nT->Title = $data['Title'];
+		$nT->Description = $data['Description'];
+		$nT->ProjectID = $data['Project'];
+		$nT->DeveloperID = $data['Developer'];
+		$nT->write();
+
+		// Create a nice msg for our users
+		$form->sessionMessage('Task angelegt!','good');
+
+		// Redirect back to the form page
+		return $this->redirectBack();
+	}
+
 	public function noRights(){
 		if(!Member::currentUser())
 			return $this->redirect('Security/login');
@@ -168,6 +216,17 @@ class ProjectmanagerController extends ContentController {
 			return 'Projektmanager-Seiten';
 		else
 			return 'Administrator-Seiten';
+	}
+
+	public function myUrl2() {
+		$segments = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
+		$numSegments = count($segments);
+		$currentSegment = $segments[$numSegments - 2];
+
+		if($currentSegment == 'developer')
+			return 'developer';
+		else
+			return 'projectmanager';
 	}
 
 	public function myGroup(){

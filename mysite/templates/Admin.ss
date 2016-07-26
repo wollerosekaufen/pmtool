@@ -38,38 +38,39 @@ Change it, enhance it and most importantly enjoy it!
 <div class="content-container unit size3of4 lastUnit">
 	<article>
 		<% if $CurrentMember %>
-		<p style="float:right">Eingeloggt als $myGroup <strong>$CurrentMember.Username</strong> (<a href="{$BaseHref}Security/logout">Logout</a>)</p>
-		<h1>Mitarbeiterliste</h1>
-		<a style="float:right" href="{$BaseHref}admin"><strong>CMS</strong></a>
+			<p style="float:right">Eingeloggt als $myGroup <strong>$CurrentMember.Username</strong> (<a href="{$BaseHref}Security/logout">Logout</a>)</p>
+			<h1>Mitarbeiterliste</h1>
 
-
-            <table class="pure-table pure-table-horizontal">
-                <thead>
-                <tr>
-                    <th>Vorname</th>
-                    <th>Nachname</th>
-                    <th>Username</th>
-                    <th>E-Mail</th>
-                    <th>Rolle</th>
-                </tr>
-                </thead>
-                <tbody>
-					<% loop $Members %>
-                    <tr>
-                        <td>$FirstName</td>
-                        <td>$Surname</td>
-                        <td>$Username</td>
-                        <td>$Email</td>
-						<% if $ClassName == "Member" %>
-                            <td>Administrator</td>
-						<% else %>
-                            <td>$ClassName</td>
-						<% end_if %>
-                    </tr>
-					<% end_loop %>
-                </tbody>
-            </table>
-
+			<dev class="pure-u-4-5">
+				<table class="pure-table pure-table-horizontal">
+					<thead>
+					<tr>
+						<th>Vorname</th>
+						<th>Nachname</th>
+						<th>Username</th>
+						<th>E-Mail</th>
+						<th>Rolle</th>
+					</tr>
+					</thead>
+					<tbody>
+						<% loop $Members %>
+						<tr>
+							<td>$FirstName</td>
+							<td>$Surname</td>
+							<td>$Username</td>
+							<td>$Email</td>
+							<% if $ClassName == "Member" %>
+								<td>Administrator</td>
+							<% else %>
+								<td>$ClassName</td>
+							<% end_if %>
+						</tr>
+						<% end_loop %>
+					</tbody>
+				</table>
+			</dev><dev class="pure-u-1-5">
+            	<a style="float:right" href="{$BaseHref}admin"><strong>CMS</strong></a><br><br>
+			</dev>
 		<% end_if %>
 
 		<div class="content">$Content</div>

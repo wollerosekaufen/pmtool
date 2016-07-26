@@ -39,7 +39,7 @@ Change it, enhance it and most importantly enjoy it!
 <div class="content-container unit size3of4 lastUnit">
 	<article>
 		<% if $CurrentMember %>
-		<p style="float:right">Eingeloggt als $myGroup <strong>$CurrentMember.Username</strong> (<a href="{$BaseHref}Security/logout">Logout</a>)</p><br>
+		<p style="float:right">Eingeloggt als $myGroup <strong>$CurrentMember.Username</strong> (<a href="{$BaseHref}Security/logout">Logout</a>)</p>
 		<h1>Projekt&uuml;bersicht</h1>
 
 	<div class="pure-u-1-4">
@@ -86,7 +86,7 @@ Change it, enhance it and most importantly enjoy it!
 						
 						<div style="float:right" class="project-content-controls pure-u-8-24">
 							<a href="{$BaseHref}projectmanager/newproject" class="secondary-button pure-button">New Project</a>
-							<a  class="secondary-button pure-button">New Task</a>
+							<a href="{$BaseHref}projectmanager/newtask"  class="secondary-button pure-button">New Task</a>
 							<a  class="secondary-button pure-button">Delete</a>
                         </div>
                     </div>
@@ -123,7 +123,7 @@ Change it, enhance it and most importantly enjoy it!
 				<div class="pure-u-1-3"><p style="margin: 6px 20px;"><b>Kein Projekt ausgew&auml;hlt.</b></p></div>
 					<div style="float:right" class="project-content-controls pure-u-8-24">
 						<a href="{$BaseHref}projectmanager/newproject" class="secondary-button pure-button">New Project</a>
-						<a  class="secondary-button pure-button">New Task</a>
+						<a href="{$BaseHref}projectmanager/newtask"  class="secondary-button pure-button">New Task</a>
 						<a  class="secondary-button pure-button">Delete</a>
                    </div>
 			</div>

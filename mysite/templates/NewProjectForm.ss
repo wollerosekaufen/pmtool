@@ -45,6 +45,7 @@ Change it, enhance it and most importantly enjoy it!
 
 		<div class="content">$Content</div>
 		$NewProjectMask
+        <br><br><a style="color: #ffffff;" href="{$BaseHref}$myUrl2/" class="own">ZUR&Uuml;CK</a>
 	</article>
 	$Form
 	$CommentForm

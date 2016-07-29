@@ -2,85 +2,40 @@
 
 class ProjectmanagerController extends ContentController {
 
-    private static $allowed_actions = array('getTasks','NewProjectMask','renderNewProjectForm','NewTaskMask','renderNewTaskForm','noRights');
+    private static $allowed_actions = array('NewProjectMask','renderNewProjectForm','NewTaskMask','renderNewTaskForm','noRights');
 
     private static $url_handlers = array(
 		'newtask' => 'renderNewTaskForm',
-		'$ID!/tasks/$tID!' => 'getTasks',
 		'newproject' => 'renderNewProjectForm',
-		'keinZugriff' => 'noRights'//,
-        //'$ID' => 'index'
+		'keinZugriff' => 'noRights'
     );
 
-	/**
-     * Handles following scenarios:
-     *  - Show one task with all details
-     *
-     * @param SS_HTTPRequest $request
-     *
-     * @return HTMLText|void
-     */
-    public function getTasks(SS_HTTPRequest $request) {
-
-        // Fetch project by ID from URL/Request
-        $project = Project::get()->byID($request->param('ID'));
-
-        // Check if there is a task ID
-        if($request->param('tID')) {
-
-            // Fetch task by ID from URL/request
-            $task = $project->Tasks()->byID($request->param('tID'));
-
-			if(!Member::currentUser())
-				return $this->redirect('Security/login');
-			else if(Member::currentUser()->inGroups(array('administrators','projectmanager'), true))
-				return $this->customise(array('Task' => $task))->renderWith('projDetailedTaskInfo');   // Render task with template "projDetailedTaskInfo.ss"
-			else if(Member::currentUser()->inGroup('developer', true))
-				return $this->redirect('projectmanager/keinZugriff');
-        } 
-    }
-	
-	
-	
     public function index(SS_HTTPRequest $request) {
 		if(!Member::currentUser())
 			return $this->redirect('Security/login');
-		else if(Member::currentUser()->inGroups(array('administrators','projectmanager'), true))
+		else if(Member::currentUser()->inGroup('projectmanager', true))
 			return $this->renderWith('Projectmanager');
-		else if(Member::currentUser()->inGroup('developer', true))
+		else if(Member::currentUser()->inGroups(array('administrators','developer'), true))
 			return $this->redirect('projectmanager/keinZugriff');
     }
-	
 
 	public function renderNewProjectForm(SS_HTTPRequest $request) {
 		if(!Member::currentUser())
 			return $this->redirect('Security/login');
-		else if(Member::currentUser()->inGroups(array('administrators','projectmanager'), true))
+		else if(Member::currentUser()->inGroup('projectmanager', true))
 			return $this->renderWith('NewProjectForm');
-		else if(Member::currentUser()->inGroup('developer', true))
+		else if(Member::currentUser()->inGroups(array('administrators','developer'), true))
 			return $this->redirect('projectmanager/keinZugriff');
     }
 
 	public function renderNewTaskForm(SS_HTTPRequest $request) {
 		if(!Member::currentUser())
 			return $this->redirect('Security/login');
-		else if(Member::currentUser()->inGroups(array('administrators','projectmanager'), true))
+		else if(Member::currentUser()->inGroup('projectmanager', true))
 			return $this->renderWith('NewTaskForm');
-		else if(Member::currentUser()->inGroup('developer', true))
+		else if(Member::currentUser()->inGroups(array('administrators','developer'), true))
 			return $this->redirect('projectmanager/keinZugriff');
 	}
-
-	/**
-     * Returns a list (DataList) of all stored projects.
-     *
-     * You can access this method in the template via $getProjects or just $Projects
-     * (the word "get" is not mandatory in templates).
-     *
-     * @return DataList All stored projects.
-     */
-    public function getProjects() {
-        return Project::get();
-    }
 
     /**
      * Try to fetch a project record by the ID from the URL.
@@ -168,7 +123,7 @@ class ProjectmanagerController extends ContentController {
 				->setAttribute('placeholder', 'Enter a task title ...'), // (key,name)
 			TextareaField::create('Description','Description')
 				->setAttribute('autocomplete', 'off'),
-			DropdownField::create('Project','Project', Project::get()->map('ID','Title'))
+			DropdownField::create('Project','Project', Project::get()->filter('End:GreaterThan',date('Y-m-d'))->map('ID','Title'))
 				->setEmptyString('Select a Project ...'),
 			DropdownField::create('Developer','Developer', Developer::get()->map('ID','Title'))
 				->setEmptyString('Select a Developer ...')
@@ -234,6 +189,8 @@ class ProjectmanagerController extends ContentController {
 			return 'Projektmanager';
 		else if(Member::currentUser()->inGroup('developer', true))
 			return 'Developer';
+		else if(Member::currentUser()->inGroup('administrators',true))
+			return 'Administrator';
 	}
 
 }

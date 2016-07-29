@@ -11,8 +11,7 @@
 		);
 		
 		private static $has_many = array(
-			'Tasks' => 'Task',
-			'Timestamps' => 'Timestamp'
+			'Tasks' => 'Task'
 		);
 		
 	}

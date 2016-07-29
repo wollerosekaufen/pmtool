@@ -56,7 +56,7 @@ Change it, enhance it and most importantly enjoy it!
 						<%-- Inside if this block we are in the project scope so the fields $Title, $Start, ... are available --%>
                         <div class="project-item<% if $Top.ActiveProject.ID == $ID %> project-item-active<% end_if %>">
 							<%-- OK, here we are building our URL to switch projects. $BaseHref fetches the Root URL over the base_tag, than we have our self-defined "projects" route and at the end we are adding the ID of the current project (scope) --%>
-                            <h5 class="project-name"><a href="{$BaseHref}developer/$ID" class="project-subject">$Title</a></h5>
+                            <h5 class="project-name"><a href="{$BaseHref}developer/projects/$ID" class="project-subject">$Title</a></h5>
                         </div>
 					<% end_loop %>
                 </div>
@@ -66,7 +66,7 @@ Change it, enhance it and most importantly enjoy it!
 						<%-- Inside if this block we are in the project scope so the fields $Title, $Start, ... are available --%>
                         <div class="project-item<% if $Top.ActiveProject.ID == $ID %> project-item-active<% end_if %>">
 							<%-- OK, here we are building our URL to switch projects. $BaseHref fetches the Root URL over the base_tag, than we have our self-defined "projects" route and at the end we are adding the ID of the current project (scope) --%>
-                            <h5 class="project-name"><a href="{$BaseHref}developer/$ID" class="project-subject">$Title</a></h5>
+                            <h5 class="project-name"><a href="{$BaseHref}developer/projects/$ID" class="project-subject">$Title</a></h5>
                         </div>
 					<% end_loop %>
                 </div>
@@ -84,9 +84,8 @@ Change it, enhance it and most importantly enjoy it!
                                 </p>
                             </div>
 
-                            <div style="float:right" class="project-content-controls pure-u-1-5">
+                            <div style="float:right" class="project-content-controls pure-u-3-24">
                                 <a href="{$BaseHref}developer/newtask" class="secondary-button pure-button">New Task</a>
-                                <a  class="secondary-button pure-button">Delete</a>
                             </div>
                         </div>
 
@@ -106,7 +105,7 @@ Change it, enhance it and most importantly enjoy it!
                                     <tbody>
 										<% loop $Tasks %>
                                         <tr>
-                                            <td><a href="{$BaseHref}developer/$Project.ID/tasks/$ID">$Title</a></td>
+                                            <td><a href="{$BaseHref}developer/projects/$Project.ID/tasks/$ID">$Title</a></td>
                                         </tr>
 										<% end_loop %>
                                     </tbody>
@@ -120,9 +119,8 @@ Change it, enhance it and most importantly enjoy it!
                 <div class="project-content">
                     <div class="project-content-header pure-g">
                         <div class="pure-u-1-3"><p style="margin: 6px 20px;"><b>Kein Projekt ausgew&auml;hlt.</b></p></div>
-                        <div style="float:right;" class="project-content-controls pure-u-1-5">
+                        <div style="float:right;" class="project-content-controls pure-u-3-24">
                             <a href="{$BaseHref}developer/newtask" class="secondary-button pure-button">New Task</a>
-                            <a  class="secondary-button pure-button">Delete</a>
                         </div>
                     </div>
                 </div>

@@ -2,55 +2,29 @@
 
 class DeveloperController extends ContentController {
 
-    private static $allowed_actions = array('getTasks','NewTaskMask','renderNewTaskForm','noRights');
+    private static $allowed_actions = array('NewTaskMask','renderNewTaskForm','noRights');
 
     private static $url_handlers = array(
         'newtask' => 'renderNewTaskForm',
-        'keinZugriff' => 'noRights',
-        '$ID!/tasks/$tID!' => 'getTasks',
-        '$ID' => 'index'
+        'keinZugriff' => 'noRights'
     );
-
-    public function getTasks(SS_HTTPRequest $request) {
-
-        // Fetch project by ID from URL/Request
-        $project = Project::get()->byID($request->param('ID'));
-
-        // Check if there is a task ID
-        if($request->param('tID')) {
-
-            // Fetch task by ID from URL/request
-            $task = $project->Tasks()->byID($request->param('tID'));
-
-            if(!Member::currentUser())
-                return $this->redirect('Security/login');
-            else if(Member::currentUser()->inGroups(array('administrators','developer'), true))
-                return $this->customise(array('Task' => $task))->renderWith('devDetailedTaskInfo');   // Render task with template "devDetailedTaskInfo.ss"
-            else if(Member::currentUser()->inGroup('projectmanager', true))
-                return $this->redirect('developer/keinZugriff');
-        }
-    }
 
     public function index(SS_HTTPRequest $request) {
 		if(!Member::currentUser())
 			return $this->redirect('Security/login');
-        else if(Member::currentUser()->inGroups(array('administrators','developer'), true))
+        else if(Member::currentUser()->inGroup('developer', true))
             return $this->renderWith('Developer');
-        else if(Member::currentUser()->inGroup('projectmanager', true))
+        else if(Member::currentUser()->inGroups(array('administrators','projectmanager'), true))
             return $this->redirect('developer/keinZugriff');
     }
 
     public function renderNewTaskForm(SS_HTTPRequest $request) {
         if(!Member::currentUser())
             return $this->redirect('Security/login');
-        else if(Member::currentUser()->inGroups(array('administrators','developer'), true))
+        else if(Member::currentUser()->inGroup('developer', true))
             return $this->renderWith('NewTaskForm');
-        else if(Member::currentUser()->inGroup('projectmanager', true))
+        else if(Member::currentUser()->inGroups(array('administrators','projectmanager'), true))
             return $this->redirect('developer/keinZugriff');
-    }
-
-    public function getProjects() {
-        return Project::get();
     }
 
     public function getActiveProject() {
@@ -77,7 +51,7 @@ class DeveloperController extends ContentController {
 
     public function getArchivedProjects(){
         $developer = Developer::get()->byID(Member::currentUserID());
-        $MyOwnProjects = $developer->Projects()->filter('End:LessThan',date('Y-m-d'));
+        $MyOwnProjects = $developer->Projects()->filter('End:LessThan', date('Y-m-d'));
         return $MyOwnProjects;
     }
 
@@ -89,10 +63,9 @@ class DeveloperController extends ContentController {
                 ->setAttribute('placeholder', 'Enter a task title ...'), // (key,name)
             TextareaField::create('Description','Description')
                 ->setAttribute('autocomplete', 'off'),
-            DropdownField::create('Project','Project', Project::get()->map('ID','Title'))
+            DropdownField::create('Project','Project',Developer::get()->byID(Member::currentUserID())->Projects()->filter('End:GreaterThan',date('Y-m-d'))->map('ID','Title'))
                 ->setEmptyString('Select a Project ...'),
-            DropdownField::create('Developer','Developer', Developer::get()->map('ID','Title'))
-                ->setEmptyString('Select a Developer ...')
+            HiddenField::create('Developer',Developer::get()->byID(Member::currentUserID()))
         );
 
         $actions = new FieldList(FormAction::create('doCreateT','Task anlegen'));
@@ -156,5 +129,7 @@ class DeveloperController extends ContentController {
             return 'Projektmanager';
         else if(Member::currentUser()->inGroup('developer', true))
             return 'Developer';
+        else if(Member::currentUser()->inGroup('administrators',true))
+            return 'Administrator';
     }
 }

@@ -25,6 +25,13 @@ class Page_Controller extends ContentController {
 			return $this->redirect('Security/login');
 	}
 
+	public function myGroup(){
+		if(Member::currentUser()->inGroup('projectmanager', true))
+			return 'Projektmanager';
+		else if(Member::currentUser()->inGroup('developer', true))
+			return 'Developer';
+	}
+
 }
 
 

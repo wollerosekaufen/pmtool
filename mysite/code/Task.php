@@ -10,9 +10,6 @@ class Task extends DataObject {
 		'Project' => 'Project',
 		'Developer' => 'Developer'
 	);
-		
-	private static $has_many = array(
-		'Timestamps' => 'Timestamp'
-	);
+
 }
 
